@@ -2,12 +2,13 @@ from flask import Flask, request, render_template
 from flask_cors import CORS
 import json
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-# from transformers import BlenderbotTokenizer, BlenderbotForConditionalGeneration, Conversation, ConversationalPipeline
+
 
 app = Flask(__name__)
 CORS(app)
 
 model_name = "facebook/blenderbot-400M-distill"
+# model_name = "google/flan-t5-small"
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 conversation_history = []
@@ -32,7 +33,7 @@ def handle_prompt():
     inputs = tokenizer.encode_plus(combined_input, return_tensors="pt")
 
     # Generate the response from the model
-    outputs = model.generate(**inputs, max_length= 60,
+    outputs = model.generate(**inputs, max_length= 600,
                                 num_beams=3,             # beam search for better responses
                                 no_repeat_ngram_size=2,  # avoid repeating 2-grams
                                 early_stopping=True,
