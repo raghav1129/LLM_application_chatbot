@@ -42,30 +42,28 @@ const sendMessage = async (message) => {
   messagesContainer.appendChild(loadingtextElement);
 
   async function makePostRequest(msg) {
-    const url = 'www.example.com';  // Make a POST request to this url
-    const requestBody = {
-      prompt: msg
-    };
-  
+    const url = '/chatbot';    
+    const requestBody = { prompt: msg };
+
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: msg })
       });
-  
-      const data = await response.text();
-      // Handle the response data here
-      console.log(data);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.text();  // your Flask returns plain text
       return data;
     } catch (error) {
-      // Handle any errors that occurred during the request
       console.error('Error:', error);
-      return error
+      return 'Error contacting server';
     }
   }
+
   
   var res = await makePostRequest(message);
   
